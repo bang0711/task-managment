@@ -10,8 +10,12 @@ import { auth } from '@/auth';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Next Shadcn',
-  description: 'Basic dashboard with Next.js and Shadcn'
+  title: 'Task Management',
+  description: 'Basic dashboard with Next.js and Shadcn',
+  icons: ['/icon.png'],
+  openGraph: {
+    images: ['/opengraph-image.png']
+  }
 };
 
 export default async function RootLayout({
