@@ -3,14 +3,6 @@ import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 
 import * as React from 'react';
 
-import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle
-} from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -20,20 +12,14 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { useToast } from '@/components/ui/use-toast';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle
-} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 
 import { UniqueIdentifier } from '@dnd-kit/core';
-import { deleteColumn, updateColumn } from '@/lib/column';
-import { Label } from '@/components/ui/label';
-import { createTask } from '@/lib/task';
+
+import { updateColumn } from '@/lib/column';
+
+import TaskCreateForm from './task-create-form';
+import ColumnDeleteForm from './column-delete-form';
 
 export function ColumnActions({
   title,
@@ -45,30 +31,12 @@ export function ColumnActions({
   const [isLoading, setIsLoading] = React.useState(false);
   const [name, setName] = React.useState(title);
   const [oldName, setOldName] = React.useState(title);
-  const [pending, startTransition] = React.useTransition();
   const [editDisable, setIsEditDisable] = React.useState(true);
   const [showDeleteDialog, setShowDeleteDialog] = React.useState(false);
   const [showAddTasksDialog, setShowAddTasksDialog] = React.useState(false);
   const inputRef = React.useRef<HTMLInputElement>(null);
 
   const { toast } = useToast();
-
-  const removeCol = async (id: string) => {
-    setIsLoading(true);
-
-    const res = await deleteColumn(id);
-
-    setIsLoading(false);
-
-    toast({
-      title: res.message,
-      variant: res.statusCode === 200 ? 'default' : 'destructive'
-    });
-
-    if (res.statusCode === 200) {
-      setShowDeleteDialog(false);
-    }
-  };
 
   const updateCol = async (name: string) => {
     setIsLoading(true);
@@ -91,27 +59,6 @@ export function ColumnActions({
     }
   };
 
-  const addTask = async (data: FormData) => {
-    const title = data.get('title') as string;
-
-    if (!title.trim()) {
-      return toast({
-        title: 'Please enter a task title',
-        variant: 'destructive'
-      });
-    }
-
-    const res = await createTask(id.toString(), title);
-
-    toast({
-      title: res.message,
-      variant: res.statusCode === 201 ? 'default' : 'destructive'
-    });
-
-    if (res.statusCode === 201) {
-      setShowAddTasksDialog(false);
-    }
-  };
   return (
     <>
       <form
@@ -131,6 +78,7 @@ export function ColumnActions({
           ref={inputRef}
         />
       </form>
+
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
           <Button variant="secondary" className="ml-1">
@@ -167,77 +115,17 @@ export function ColumnActions({
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>
-              Are you sure want to delete column?
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              NOTE: All tasks related to this category will also be deleted.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter className="flex items-center">
-            <Button
-              variant="secondary"
-              disabled={isLoading}
-              onClick={() => {
-                setShowDeleteDialog(false);
-              }}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="destructive"
-              disabled={isLoading}
-              onClick={() => {
-                // yes, you have to set a timeout
-                setTimeout(() => (document.body.style.pointerEvents = ''), 100);
+      <ColumnDeleteForm
+        id={id.toString()}
+        setShowDeleteDialog={setShowDeleteDialog}
+        showDeleteDialog={showDeleteDialog}
+      />
 
-                removeCol(id.toString());
-              }}
-            >
-              Delete
-            </Button>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-
-      <Dialog open={showAddTasksDialog} onOpenChange={setShowAddTasksDialog}>
-        <DialogContent className="sm:max-w-[425px]">
-          <form
-            action={(data) =>
-              startTransition(async () => {
-                await addTask(data);
-              })
-            }
-          >
-            <DialogHeader>
-              <DialogTitle>Add New Task</DialogTitle>
-              <DialogDescription>
-                Adding more task here. Click create when you&apos;re done.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="title" className="text-right">
-                  Title
-                </Label>
-                <Input
-                  name="title"
-                  placeholder="Enter task title"
-                  className="col-span-3"
-                />
-              </div>
-            </div>
-            <DialogFooter>
-              <Button disabled={pending} type="submit">
-                Create
-              </Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
+      <TaskCreateForm
+        id={id.toString()}
+        setShowAddTasksDialog={setShowAddTasksDialog}
+        showAddTasksDialog={showAddTasksDialog}
+      />
     </>
   );
 }

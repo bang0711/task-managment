@@ -2,7 +2,7 @@
 import { revalidatePath } from 'next/cache';
 import prisma from './prisma';
 
-const CURRENT_URL = '/dashboard/projects/';
+const CURRENT_URL = '/team/';
 
 type NewColumn = {
   title: string;
@@ -40,7 +40,7 @@ export const createColumn = async ({ title, projectId }: NewColumn) => {
     }
   });
 
-  revalidatePath(`${CURRENT_URL}${projectId}`);
+  revalidatePath(`${CURRENT_URL}${project.teamId}/projects/${projectId}`);
 
   return {
     message: 'Column created successfully',
@@ -52,9 +52,6 @@ export const changeColumnOrder = async (
   sourceColId: string,
   destinationColId: string
 ) => {
-  console.log(sourceColId);
-  console.log(destinationColId);
-
   const [sourceCol, destinationCol] = await Promise.all([
     prisma.column.findUnique({
       where: {
@@ -100,6 +97,14 @@ export const deleteColumn = async (id: string) => {
   const column = await prisma.column.findUnique({
     where: {
       id
+    },
+    include: {
+      Project: {
+        select: {
+          id: true,
+          teamId: true
+        }
+      }
     }
   });
 
@@ -112,8 +117,9 @@ export const deleteColumn = async (id: string) => {
       id
     }
   });
-
-  revalidatePath(`${CURRENT_URL}${column.projectId}`);
+  revalidatePath(
+    `${CURRENT_URL}${column.Project?.teamId}/projects/${column.projectId}`
+  );
 
   return { message: 'Column deleted', statusCode: 200 };
 };
@@ -162,7 +168,7 @@ export const updateColumn = async (id: string, title: string) => {
     }
   });
 
-  revalidatePath(`${CURRENT_URL}${column.projectId}`);
+  revalidatePath(`${CURRENT_URL}${project.teamId}/projects/${project.id}`);
 
   return { message: 'Column updated', statusCode: 200 };
 };

@@ -10,8 +10,18 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
+}
+
+model Team {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  icon      Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  projects Project[]
 }
 
 model Project {
@@ -21,6 +31,8 @@ model Project {
   updatedAt DateTime @updatedAt
 
   columns Column[]
+  Team    Team?    @relation(fields: [teamId], references: [id])
+  teamId  String?  @map("team_id")
 }
 
 model Column {

@@ -18,9 +18,11 @@ import { useToast } from '@/components/ui/use-toast';
 import { Plus } from 'lucide-react';
 import { createProject } from '@/lib/project';
 
-type Props = {};
+type Props = {
+  teamId: string;
+};
 
-function ProjectCreateForm({}: Props) {
+function ProjectCreateForm({ teamId }: Props) {
   const [isOpen, setIsOpen] = useState(false);
 
   const [pending, startTransition] = useTransition();
@@ -37,7 +39,7 @@ function ProjectCreateForm({}: Props) {
       });
     }
 
-    const res = await createProject(name);
+    const res = await createProject(name, teamId);
 
     if (res.statusCode === 201) {
       toast({
@@ -49,8 +51,8 @@ function ProjectCreateForm({}: Props) {
   return (
     <Dialog onOpenChange={setIsOpen} open={isOpen}>
       <DialogTrigger asChild>
-        <Button variant="default">
-          <Plus className="mr-2 h-4 w-4" /> Add New
+        <Button variant="outline">
+          <Plus className="h-4 w-4" /> Add New
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">

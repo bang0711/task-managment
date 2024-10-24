@@ -1,7 +1,6 @@
 'use client';
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { useTaskStore } from '@/lib/store';
 import { hasDraggableData } from '@/lib/utils';
 import {
   Announcements,
@@ -55,9 +54,6 @@ export function KanbanBoard({ cols }: Props) {
     setTasks(cols.map((c) => c.tasks).flat());
   }, [cols, isMounted]);
 
-  useEffect(() => {
-    useTaskStore.persist.rehydrate();
-  }, []);
   if (!isMounted) return;
 
   function getDraggingTaskData(
@@ -135,13 +131,7 @@ export function KanbanBoard({ cols }: Props) {
         over.data.current?.type === 'Column'
       ) {
         const overColumnPosition = columnsId.findIndex((id) => id === over.id);
-        console.log(
-          `Column ${
-            active.data.current.column.title
-          } was dropped into position ${overColumnPosition + 1} of ${
-            columnsId.length
-          }`
-        );
+
         return `Column ${
           active.data.current.column.title
         } was dropped into position ${overColumnPosition + 1} of ${
@@ -157,28 +147,19 @@ export function KanbanBoard({ cols }: Props) {
         );
 
         if (over.data.current.task.columnId !== pickedUpTaskColumn.current) {
-          console.log('different');
           changeTaskColumn(
             over.data.current.task.id,
             column?.id as string,
             tasksInColumn.length
           );
-          console.log(
-            `Task was dropped into column ${column?.title} in position ${
-              taskPosition + 1
-            } of ${tasksInColumn.length}`
-          );
+
           return `Task was dropped into column ${column?.title} in position ${
             taskPosition + 1
           } of ${tasksInColumn.length}`;
         }
 
         changeTaskOrder(active.data.current.task.id, taskPosition + 1);
-        console.log(
-          ` Task ${active.data.current.task.title} dropped into position ${
-            taskPosition + 1
-          } of ${tasksInColumn.length} in column ${column?.title}`
-        );
+
         return `Task was dropped into position ${taskPosition + 1} of ${
           tasksInColumn.length
         } in column ${column?.title}`;

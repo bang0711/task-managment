@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { cva } from 'class-variance-authority';
-import { GripVertical } from 'lucide-react';
+import { GripVertical, MoreHorizontal } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Task } from '@prisma/client';
 // import { Task } from '@/lib/store';
@@ -61,7 +61,7 @@ export function TaskCard({ task, isOverlay }: TaskCardProps) {
         dragging: isOverlay ? 'overlay' : isDragging ? 'over' : undefined
       })}
     >
-      <CardHeader className="space-between relative flex flex-row border-b-2 border-secondary px-3 py-3">
+      <CardHeader className="space-between relative flex flex-row items-center border-b-2 border-secondary px-3 py-3">
         <Button
           variant={'ghost'}
           {...attributes}
@@ -71,6 +71,7 @@ export function TaskCard({ task, isOverlay }: TaskCardProps) {
           <span className="sr-only">Move task</span>
           <GripVertical />
         </Button>
+
         <Badge variant={'outline'} className="ml-auto font-semibold">
           Task
         </Badge>

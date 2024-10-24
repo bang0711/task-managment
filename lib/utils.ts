@@ -3,6 +3,7 @@ import { twMerge } from 'tailwind-merge';
 import { Active, DataRef, Over } from '@dnd-kit/core';
 import { ColumnDragData } from '@/sections/kanban/board-column';
 import { TaskDragData } from '@/sections/kanban/task-card';
+import prisma from './prisma';
 
 type DraggableData = ColumnDragData | TaskDragData;
 
@@ -45,3 +46,41 @@ export function formatBytes(
     sizeType === 'accurate' ? accurateSizes[i] ?? 'Bytest' : sizes[i] ?? 'Bytes'
   }`;
 }
+
+export function removePointerEventsFromBody() {
+  if (document.body.style.pointerEvents === 'none') {
+    document.body.style.pointerEvents = '';
+  }
+}
+
+export const generateBreadcrumbs = (
+  items: Array<{ title: string; path?: string }>
+) => {
+  let fullPath = '/teams';
+
+  return items.map((item, index) => {
+    if (item.path) {
+      fullPath += `/${item.path}`;
+    }
+
+    return {
+      title: item.title,
+      link: fullPath
+    };
+  });
+};
+
+export const getSidebarTeam = async (teamId: string) => {
+  const teams = await prisma.team.findMany({
+    include: {
+      projects: true
+    }
+  });
+
+  const activeTeam = teams.find((team) => team.id === teamId);
+
+  return {
+    teams,
+    activeTeam
+  };
+};

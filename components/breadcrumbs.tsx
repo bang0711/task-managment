@@ -1,3 +1,4 @@
+'use client';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -21,7 +22,7 @@ export function Breadcrumbs({ items }: { items: BreadcrumbItemProps[] }) {
     <Breadcrumb>
       <BreadcrumbList>
         {items.map((item, index) => (
-          <Fragment key={item.title}>
+          <Fragment key={index}>
             {index !== items.length - 1 && (
               <BreadcrumbItem>
                 <BreadcrumbLink href={item.link}>{item.title}</BreadcrumbLink>

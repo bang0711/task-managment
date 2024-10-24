@@ -19,7 +19,7 @@ import { createColumn } from '@/lib/column';
 
 export default function NewColumnDialog() {
   const params = useParams();
-  const { id } = params;
+  const { projectId } = params;
 
   const { toast } = useToast();
 
@@ -39,7 +39,7 @@ export default function NewColumnDialog() {
 
     setIsOpen(true);
 
-    const res = await createColumn({ title, projectId: id as string });
+    const res = await createColumn({ title, projectId: projectId as string });
 
     const isSuccess = res.statusCode === 201;
 

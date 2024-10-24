@@ -39,7 +39,7 @@ export default function UserAuthForm() {
     startTransition(() => {
       signIn('credentials', {
         email: data.email,
-        callbackUrl: callbackUrl ?? '/dashboard'
+        callbackUrl: callbackUrl ?? '/teams'
       });
     });
   };

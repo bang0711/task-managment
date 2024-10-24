@@ -8,7 +8,7 @@ import {
   DotFilledIcon
 } from '@radix-ui/react-icons';
 
-import { cn } from '@/lib/utils';
+import { cn, removePointerEventsFromBody } from '@/lib/utils';
 
 const DropdownMenu = DropdownMenuPrimitive.Root;
 
@@ -93,6 +93,13 @@ const DropdownMenuItem = React.forwardRef<
       className
     )}
     {...props}
+    onSelect={(event) => {
+      if (props.onSelect) {
+        props.onSelect(event);
+      }
+
+      removePointerEventsFromBody();
+    }}
   />
 ));
 DropdownMenuItem.displayName = DropdownMenuPrimitive.Item.displayName;
