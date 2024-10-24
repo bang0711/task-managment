@@ -28,7 +28,7 @@ async function ProjectDetailKanban({ params: { projectId } }: Props) {
 
   const { columns } = project;
 
-  return <KanbanViewPage project={project} columns={columns} />;
+  return <KanbanViewPage columns={columns} />;
 }
 
 export default ProjectDetailKanban;
